@@ -5,24 +5,22 @@ import java.util.Comparator;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    private int endIdx = 0;
+    private int resumesCount = -1;
     boolean isSorted = false;
     Resume[] storage = new Resume[10000];
 
     void clear() {
-        Arrays.fill(storage, null);
-        endIdx = 0;
+        Arrays.fill(storage, 0, resumesCount + 1, null);
+        resumesCount = -1;
     }
 
     void save(Resume r) {
-        var foundIdx = search(r);
+        int foundIdx = search(r);
         if (foundIdx < 0) {
-            if (size() <= storage.length) {
-                storage[++endIdx] = r;
+            if (resumesCount < storage.length) {
+                storage[++resumesCount] = r;
             } else
-                throw new ArrayIndexOutOfBoundsException("Unable to save element");
-        } else {
-            storage[foundIdx] = r;
+                throw new IllegalArgumentException("Unable to save element");
         }
     }
 
@@ -35,57 +33,40 @@ public class ArrayStorage {
         int foundIdx = search(uuid);
         if (foundIdx < 0)
             return;
-        storage[foundIdx--] = null;
-    }
 
-    //copied from Arrays.binarySearch
-    private static int binarySearch(Resume[] a, int fromIndex, int toIndex, Resume key) {
-        int low = fromIndex;
-        int high = toIndex - 1;
-
-        while (low <= high) {
-            int mid = (low + high) >>> 1;
-            if (a[mid] == null)
-                return -(low + 1);  // key not found.
-            Resume midVal = a[mid];
-            int cmp = midVal.compareTo(key);
-
-            if (cmp < 0)
-                low = mid + 1;
-            else if (cmp > 0)
-                high = mid - 1;
-            else
-                return mid; // key found
+        if (foundIdx == resumesCount)
+            storage[foundIdx] = null;
+        else{
+            storage[foundIdx] = storage[resumesCount];
+            storage[resumesCount] = null;
         }
-        return -(low + 1);  // key not found.
+        resumesCount--;
     }
 
     int search(Resume searchItem) {
-        sort();
-        if (searchItem == null || storage[0] == null)
+        if (searchItem == null)
             return -1;
-        return binarySearch(storage, 0, size(), searchItem);
+
+        for (int i = 0; i <= resumesCount; i++)
+        {
+            if (storage[i].equals(searchItem))
+                return i;
+        }
+        return -1;
     }
 
     int search(String uuid) {
-        if (uuid == null)
-            return -1;
         return search(new Resume(uuid));
-    }
-
-    void sort() {
-        Arrays.sort(storage, Comparator.<Resume>nullsLast(Resume::compareTo));
     }
 
     /**
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-        sort();
-        return Arrays.copyOf(storage, size());
+        return Arrays.copyOf(storage, resumesCount + 1);
     }
 
     int size() {
-        return endIdx + 1;
+        return resumesCount + 1;
     }
 }
