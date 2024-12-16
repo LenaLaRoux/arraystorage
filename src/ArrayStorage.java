@@ -1,27 +1,28 @@
 import java.util.Arrays;
-import java.util.Comparator;
+import java.util.Objects;
 
 /**
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    private int resumesCount = -1;
-    boolean isSorted = false;
+    private int endIdx = -1;
     Resume[] storage = new Resume[10000];
 
     void clear() {
-        Arrays.fill(storage, 0, resumesCount + 1, null);
-        resumesCount = -1;
+        Arrays.fill(storage, 0, endIdx + 1, null);
+        endIdx = -1;
     }
 
     void save(Resume r) {
-        int foundIdx = search(r);
-        if (foundIdx < 0) {
-            if (resumesCount < storage.length) {
-                storage[++resumesCount] = r;
-            } else
-                throw new IllegalArgumentException("Unable to save element");
-        }
+        if (r == null) return;
+
+        int foundIdx = search(r.uuid);
+        //is already added
+        if (foundIdx >= 0) return;
+
+        if (endIdx >= storage.length) throw new IllegalArgumentException("Unable to save element");
+
+        storage[++endIdx] = r;
     }
 
     Resume get(String uuid) {
@@ -31,42 +32,32 @@ public class ArrayStorage {
 
     void delete(String uuid) {
         int foundIdx = search(uuid);
-        if (foundIdx < 0)
-            return;
+        if (foundIdx < 0) return;
 
-        if (foundIdx == resumesCount)
-            storage[foundIdx] = null;
-        else{
-            storage[foundIdx] = storage[resumesCount];
-            storage[resumesCount] = null;
+        if (foundIdx == endIdx) storage[foundIdx] = null;
+        else {
+            storage[foundIdx] = storage[endIdx];
+            storage[endIdx] = null;
         }
-        resumesCount--;
+        endIdx--;
     }
 
-    int search(Resume searchItem) {
-        if (searchItem == null)
-            return -1;
+    private int search(String uuid) {
 
-        for (int i = 0; i <= resumesCount; i++)
-        {
-            if (storage[i].equals(searchItem))
-                return i;
+        for (int i = 0; i <= endIdx; i++) {
+            if (Objects.equals(storage[i].uuid, uuid)) return i;
         }
-        return -1;
-    }
-
-    int search(String uuid) {
-        return search(new Resume(uuid));
+        return -1; //not found
     }
 
     /**
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-        return Arrays.copyOf(storage, resumesCount + 1);
+        return Arrays.copyOf(storage, endIdx + 1);
     }
 
     int size() {
-        return resumesCount + 1;
+        return endIdx + 1;
     }
 }
