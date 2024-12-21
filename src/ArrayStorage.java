@@ -5,46 +5,80 @@ import java.util.Objects;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    private int endIdx = -1;
+    final private String NOT_IN_DB = "ERROR: Resume is not in database";
+    final private String IS_IN_DB = "ERROR: Resume is already in database";
+    final private String NO_SPACE_LEFT = "ERROR: Resume database is full";
     Resume[] storage = new Resume[10000];
+    private int size = 0;
 
     void clear() {
-        Arrays.fill(storage, 0, endIdx + 1, null);
-        endIdx = -1;
+        Arrays.fill(storage, 0, size, null);
+        size = 0;
     }
 
     void save(Resume r) {
         if (r == null) return;
 
         int foundIdx = search(r.uuid);
-        //is already added
-        if (foundIdx >= 0) return;
 
-        if (endIdx >= storage.length) throw new IllegalArgumentException("Unable to save element");
+        if (foundIdx >= 0) {
+            System.out.println(IS_IN_DB);
+            return;
+        }
 
-        storage[++endIdx] = r;
+        if (size > storage.length) {
+            System.out.println(NO_SPACE_LEFT);
+            return;
+        }
+
+        storage[size++] = r;
     }
 
     Resume get(String uuid) {
         int foundIdx = search(uuid);
-        return foundIdx < 0 ? null : storage[foundIdx];
+
+        if (foundIdx < 0) {
+            System.out.println(NOT_IN_DB);
+            return null;
+        }
+
+        return storage[foundIdx];
     }
 
     void delete(String uuid) {
         int foundIdx = search(uuid);
-        if (foundIdx < 0) return;
+        if (foundIdx < 0) {
+            System.out.println(NOT_IN_DB);
+            return;
+        }
 
-        if (foundIdx == endIdx) storage[foundIdx] = null;
+        final int endIdx = size - 1;
+
+        if (foundIdx == endIdx)
+            storage[foundIdx] = null;
         else {
             storage[foundIdx] = storage[endIdx];
             storage[endIdx] = null;
         }
-        endIdx--;
+        size--;
+    }
+
+    void update(Resume r) {
+        if (r == null) return;
+
+        int foundIdx = search(r.uuid);
+
+        if (foundIdx < 0) {
+            System.out.println(NOT_IN_DB);
+            return;
+        }
+
+        storage[foundIdx] = r;
     }
 
     private int search(String uuid) {
 
-        for (int i = 0; i <= endIdx; i++) {
+        for (int i = 0; i < size; i++) {
             if (Objects.equals(storage[i].uuid, uuid)) return i;
         }
         return -1; //not found
@@ -54,10 +88,10 @@ public class ArrayStorage {
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-        return Arrays.copyOf(storage, endIdx + 1);
+        return Arrays.copyOf(storage, size);
     }
 
     int size() {
-        return endIdx + 1;
+        return size;
     }
 }
