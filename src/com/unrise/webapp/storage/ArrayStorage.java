@@ -1,3 +1,7 @@
+package com.unrise.webapp.storage;
+
+import com.unrise.webapp.model.Resume;
+
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -11,15 +15,15 @@ public class ArrayStorage {
     Resume[] storage = new Resume[10000];
     private int size = 0;
 
-    void clear() {
+    public void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
     }
 
-    void save(Resume r) {
+    public void save(Resume r) {
         if (r == null) return;
 
-        int foundIdx = search(r.uuid);
+        int foundIdx = search(r.getUuid());
 
         if (foundIdx >= 0) {
             System.out.println(IS_IN_DB);
@@ -34,7 +38,7 @@ public class ArrayStorage {
         storage[size++] = r;
     }
 
-    Resume get(String uuid) {
+    public Resume get(String uuid) {
         int foundIdx = search(uuid);
 
         if (foundIdx < 0) {
@@ -45,7 +49,7 @@ public class ArrayStorage {
         return storage[foundIdx];
     }
 
-    void delete(String uuid) {
+    public void delete(String uuid) {
         int foundIdx = search(uuid);
         if (foundIdx < 0) {
             System.out.println(NOT_IN_DB);
@@ -63,10 +67,10 @@ public class ArrayStorage {
         size--;
     }
 
-    void update(Resume r) {
+    public void update(Resume r) {
         if (r == null) return;
 
-        int foundIdx = search(r.uuid);
+        int foundIdx = search(r.getUuid());
 
         if (foundIdx < 0) {
             System.out.println(NOT_IN_DB);
@@ -76,10 +80,10 @@ public class ArrayStorage {
         storage[foundIdx] = r;
     }
 
-    private int search(String uuid) {
+    protected int search(String uuid) {
 
         for (int i = 0; i < size; i++) {
-            if (Objects.equals(storage[i].uuid, uuid)) return i;
+            if (Objects.equals(storage[i].getUuid(), uuid)) return i;
         }
         return -1; //not found
     }
@@ -87,11 +91,11 @@ public class ArrayStorage {
     /**
      * @return array, contains only Resumes in storage (without null)
      */
-    Resume[] getAll() {
+    public Resume[] getAll() {
         return Arrays.copyOf(storage, size);
     }
 
-    int size() {
+    public int size() {
         return size;
     }
 }

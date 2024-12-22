@@ -1,4 +1,5 @@
-import java.util.Comparator;
+package com.unrise.webapp.model;
+
 import java.util.Objects;
 
 /**
@@ -7,13 +8,21 @@ import java.util.Objects;
 public class Resume {
 
     // Unique identifier
-    String uuid;
+    private String uuid;
 
     public Resume()
     {
 
     }
     public Resume(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
         this.uuid = uuid;
     }
 
