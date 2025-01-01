@@ -5,15 +5,15 @@ import java.util.Objects;
 /**
  * Initial resume class
  */
-public class Resume {
+public class Resume implements Comparable<Resume> {
 
     // Unique identifier
     private String uuid;
 
-    public Resume()
-    {
+    public Resume() {
 
     }
+
     public Resume(String uuid) {
         this.uuid = uuid;
     }
@@ -24,6 +24,13 @@ public class Resume {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    @Override
+    public int compareTo(Resume o) {
+        if (o == null)
+            return 1;
+        return uuid.compareTo(o.uuid);
     }
 
     @Override
