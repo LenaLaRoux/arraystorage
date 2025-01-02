@@ -9,8 +9,6 @@ import java.util.Objects;
  */
 public class ArrayStorage  extends AbstractArrayStorage{
 
-    private static final String NO_SPACE_LEFT = "ERROR: Resume database is full";
-
     public void save(Resume r) {
         if (r == null) {
             return;
@@ -37,19 +35,6 @@ public class ArrayStorage  extends AbstractArrayStorage{
         size--;
         storage[foundIndex] = storage[size];
         storage[size] = null;
-    }
-
-    public void update(Resume r) {
-        if (r == null) {
-            return;
-        }
-
-        int foundIndex = getIndex(r.getUuid());
-        if (foundIndex < 0) {
-            System.out.println(NOT_IN_DB);
-            return;
-        }
-        storage[foundIndex] = r;
     }
 
     @Override
