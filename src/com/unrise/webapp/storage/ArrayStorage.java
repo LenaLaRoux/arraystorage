@@ -1,7 +1,5 @@
 package com.unrise.webapp.storage;
 
-import com.unrise.webapp.exception.ExistStorageException;
-import com.unrise.webapp.exception.StorageException;
 import com.unrise.webapp.model.Resume;
 
 import java.util.Objects;
@@ -9,7 +7,7 @@ import java.util.Objects;
 /**
  * Array based storage for Resumes
  */
-public class ArrayStorage extends AbstractArrayStorage {
+public class ArrayStorage  extends AbstractArrayStorage{
 
     public void save(Resume r) {
         if (r == null) {
@@ -18,24 +16,24 @@ public class ArrayStorage extends AbstractArrayStorage {
 
         int foundIndex = getIndex(r.getUuid());
 
-        if (size >= storage.length) {
-            throw new StorageException(NO_SPACE_LEFT, r.getUuid());
+        if (size > storage.length) {
+            System.out.println(NO_SPACE_LEFT);
         } else if (foundIndex >= 0) {
-            throw new ExistStorageException(r.getUuid());
+            System.out.println(IS_IN_DB);
         } else {
             storage[size++] = r;
         }
     }
 
-    @Override
-    protected void processSave(Resume resume, int index) {
-        storage[size++] = resume;
-    }
+    public void delete(String uuid) {
+        int foundIndex = getIndex(uuid);
+        if (foundIndex < 0) {
+            System.out.println(NOT_IN_DB);
+            return;
+        }
 
-    @Override
-    protected void processDelete(String uuid, int index) {
         size--;
-        storage[index] = storage[size];
+        storage[foundIndex] = storage[size];
         storage[size] = null;
     }
 
