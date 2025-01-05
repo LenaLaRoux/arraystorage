@@ -3,11 +3,12 @@ package com.unrise.webapp.storage;
 import com.unrise.webapp.exception.NotExistStorageException;
 import com.unrise.webapp.exception.StorageException;
 import com.unrise.webapp.model.Resume;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 abstract class AbstractArrayStorageTest {
     protected Storage storage;
@@ -25,63 +26,63 @@ abstract class AbstractArrayStorageTest {
     @Test
     void update() {
         Resume resume = new Resume(UUID2);
-        Assertions.assertNotSame(resume, storage.get(UUID2));
+        assertNotSame(resume, storage.get(UUID2));
         storage.update(resume);
-        Assertions.assertSame(resume, storage.get(UUID2));
-        Assertions.assertEquals(resume, storage.get(UUID2));
+        assertSame(resume, storage.get(UUID2));
+        assertEquals(resume, storage.get(UUID2));
     }
 
     @Test
     void updateNotExist() {
         Resume resume = new Resume("dummy");
-        Assertions.assertThrowsExactly(NotExistStorageException.class, () -> storage.update(resume));
+        assertThrowsExactly(NotExistStorageException.class, () -> storage.update(resume));
     }
 
     @Test
     void size() {
-        Assertions.assertEquals(3, storage.size());
-        Assertions.assertEquals(3, storage.getAll().length);
+        assertEquals(3, storage.size());
+        assertEquals(3, storage.getAll().length);
     }
 
     @Test
     void clear() {
         storage.clear();
-        Assertions.assertEquals(0, storage.size());
-        Assertions.assertEquals(0, storage.getAll().length);
+        assertEquals(0, storage.size());
+        assertEquals(0, storage.getAll().length);
     }
 
     @Test
     void getAll() {
-        Assertions.assertEquals(3, storage.size());
-        Assertions.assertEquals(3, storage.getAll().length);
-        Assertions.assertEquals(storage.getAll()[0], storage.get(UUID1));
-        Assertions.assertEquals(storage.getAll()[1], storage.get(UUID2));
-        Assertions.assertEquals(storage.getAll()[2], storage.get(UUID3));
+        assertEquals(3, storage.size());
+        assertEquals(3, storage.getAll().length);
+        assertEquals(storage.getAll()[0], storage.get(UUID1));
+        assertEquals(storage.getAll()[1], storage.get(UUID2));
+        assertEquals(storage.getAll()[2], storage.get(UUID3));
     }
 
     @Test
     void get() {
-        Assertions.assertEquals(storage.getAll()[0], storage.get(UUID1));
-        Assertions.assertEquals(storage.getAll()[1], storage.get(UUID2));
-        Assertions.assertEquals(storage.getAll()[2], storage.get(UUID3));
-        Assertions.assertThrowsExactly(NotExistStorageException.class, () -> storage.get("dummy"));
+        assertEquals(storage.getAll()[0], storage.get(UUID1));
+        assertEquals(storage.getAll()[1], storage.get(UUID2));
+        assertEquals(storage.getAll()[2], storage.get(UUID3));
+        assertThrowsExactly(NotExistStorageException.class, () -> storage.get("dummy"));
     }
 
     @Test
     void saveNoSpaceLeft() {
-        Field storageLimit = Assertions.assertDoesNotThrow(() -> AbstractArrayStorage.class.getDeclaredField("STORAGE_LIMIT"));
+        Field storageLimit = assertDoesNotThrow(() -> AbstractArrayStorage.class.getDeclaredField("STORAGE_LIMIT"));
         storageLimit.setAccessible(true);
-        int STORAGE_LIMIT = (Integer) Assertions.assertDoesNotThrow(() -> storageLimit.get(null));
+        int STORAGE_LIMIT = (Integer) assertDoesNotThrow(() -> storageLimit.get(null));
 
         int i = storage.size();
         while (i < STORAGE_LIMIT) {
             int iFinal = ++i;
-            Assertions.assertDoesNotThrow(() -> storage.save(new Resume("uuid" + iFinal)));
+            assertDoesNotThrow(() -> storage.save(new Resume("uuid" + iFinal)));
         }
 
         String nextUuid = "uuid" + (STORAGE_LIMIT + 1);
-        StorageException storageException = Assertions.assertThrowsExactly(
+        StorageException storageException = assertThrowsExactly(
                 StorageException.class, () -> storage.save(new Resume(nextUuid)));
-        Assertions.assertEquals(nextUuid, storageException.getUuid());
+        assertEquals(nextUuid, storageException.getUuid());
     }
 }
