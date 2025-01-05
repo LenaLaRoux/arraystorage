@@ -52,5 +52,38 @@ public abstract class AbstractArrayStorage implements Storage {
         return storage[foundIndex];
     }
 
+
+    @Override
+    public void save(Resume r) {
+        if (r == null) {
+            return;
+        }
+
+        int foundIndex = getIndex(r.getUuid());
+
+        if (size > storage.length) {
+            System.out.println(NO_SPACE_LEFT);
+        } else if (foundIndex >= 0) {
+            System.out.println(IS_IN_DB);
+        } else {
+            processSave(r, foundIndex);
+        }
+    }
+
+    @Override
+    public void delete(String uuid) {
+        int foundIndex = getIndex(uuid);
+        if (foundIndex < 0) {
+            System.out.println(NOT_IN_DB);
+            return;
+        }
+
+        processDelete(uuid, foundIndex);
+    }
+
     protected abstract int getIndex(String uuid);
+
+    protected abstract void processDelete(String uuid, int index);
+
+    protected abstract void processSave(Resume resume, int index);
 }
