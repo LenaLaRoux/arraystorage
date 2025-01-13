@@ -77,8 +77,8 @@ public abstract class AbstractArrayStorage implements Storage {
             System.out.println(NOT_IN_DB);
             return;
         }
-
         processDelete(uuid, foundIndex);
+        storage[--size] = null;
     }
 
     protected abstract int getIndex(String uuid);

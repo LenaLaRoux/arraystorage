@@ -10,17 +10,14 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     protected void processSave(Resume resume, int index) {
         index = Math.abs(index);
 
-        Resume[] partAfterIndex = Arrays.copyOfRange(storage, index - 1, size);
+        System.arraycopy(storage, index - 1, storage, index, size - index + 1);
         storage[index - 1] = resume;
-        System.arraycopy(partAfterIndex, 0, storage, index, partAfterIndex.length);
         size++;
     }
 
     @Override
     protected void processDelete(String uuid, int index) {
-        Resume[] partAfterIndex = Arrays.copyOfRange(storage, index + 1, size);
-        System.arraycopy(partAfterIndex, 0, storage, index, partAfterIndex.length);
-        storage[--size] = null;
+        System.arraycopy(storage, index + 1, storage, index, size - index - 1);
     }
 
     @Override
