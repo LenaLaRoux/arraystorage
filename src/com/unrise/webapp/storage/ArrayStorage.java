@@ -11,7 +11,7 @@ public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
     protected void processSave(Resume resume, int index) {
-        storage[size++] = resume;
+        storage[size + 1] = resume;
     }
 
     @Override
