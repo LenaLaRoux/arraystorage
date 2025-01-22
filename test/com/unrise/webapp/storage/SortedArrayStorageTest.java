@@ -1,18 +1,14 @@
 package com.unrise.webapp.storage;
 
 import com.unrise.webapp.model.Resume;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 class SortedArrayStorageTest extends AbstractArrayStorageTest {
 
-
-    @BeforeEach
-    void setUp() {
-        storage = new SortedArrayStorage();
-        super.setUp();
+    public SortedArrayStorageTest() {
+        super(new SortedArrayStorage());
     }
 
     @Test
