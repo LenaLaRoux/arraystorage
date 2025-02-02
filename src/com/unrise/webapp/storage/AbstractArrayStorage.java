@@ -1,7 +1,5 @@
 package com.unrise.webapp.storage;
 
-import com.unrise.webapp.exception.ExistStorageException;
-import com.unrise.webapp.exception.NotExistStorageException;
 import com.unrise.webapp.exception.StorageException;
 import com.unrise.webapp.model.Resume;
 
@@ -16,26 +14,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     protected int size = 0;
 
     @Override
-    protected Integer ensureResume(String uuid) {
-        int foundIndex = getIndex(uuid);
-        if (foundIndex < 0) {
-            throw new NotExistStorageException(uuid);
-        }
-        return foundIndex;
-    }
-
-    @Override
-    protected Integer ensureNoResume(String uuid) {
-        int foundIndex = getIndex(uuid);
-
-        if (foundIndex >= 0) {
-            throw new ExistStorageException(uuid);
-        }
-        return foundIndex;
-    }
-
-    @Override
-    protected void processUpdate(Integer index, Resume r) {
+    protected void doUpdate(Integer index, Resume r) {
         storage[index] = r;
     }
 
@@ -53,12 +32,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    protected Resume processGet(Integer index) {
+    protected Resume doGet(Integer index) {
         return storage[index];
     }
 
     @Override
-    protected void processSave(Integer index, Resume r) {
+    protected void doSave(Integer index, Resume r) {
         if (size >= storage.length)
             throw new StorageException(NO_SPACE_LEFT, r.getUuid());
         processSaveArray(r, index);
@@ -66,9 +45,14 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    protected void processDelete(Integer index, String uuid) {
+    protected void doDelete(Integer index, String uuid) {
         processDeleteArray(uuid, index);
         storage[--size] = null;
+    }
+
+    @Override
+    protected boolean isFound(Integer key) {
+        return key >= 0;
     }
 
     protected abstract void processDeleteArray(String uuid, int index);

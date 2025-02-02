@@ -10,15 +10,21 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AbstractStorageTest {
+abstract public class AbstractStorageTest {
     protected final Storage storage;
     protected static final String UUID1 = "uuid1";
     protected static final String UUID2 = "uuid2";
+    protected static final String UUID2_FIO1 = "uuid2_fio1";
+    protected static final String UUID2_FIO2 = "uuid2_fio2";
+    protected static final String UUID3_FIO2 = "uuid3_fio2";
     protected static final String UUID3 = "uuid3";
     protected static final String UUID4 = "uuid4";
     protected static final String UUID5 = "uuid5";
     protected static final Resume r1 = new Resume(UUID1);
     protected static final Resume r2 = new Resume(UUID2);
+    protected static final Resume r2Fio1 = new Resume(UUID2_FIO1, "Fio1");
+    protected static final Resume r2Fio2 = new Resume(UUID2_FIO2, "Fio2");
+    protected static final Resume r3Fio1 = new Resume(UUID3_FIO2, "Fio1");
     protected static final Resume r3 = new Resume(UUID3);
     protected static final Resume r4 = new Resume(UUID4);
     protected static final Resume r5 = new Resume(UUID5);
@@ -126,6 +132,19 @@ public class AbstractStorageTest {
         assertThrowsExactly(NotExistStorageException.class, () -> storage.delete(UUID1));
         assertThrowsExactly(NotExistStorageException.class, () -> storage.delete(UUID2));
         assertThrowsExactly(NotExistStorageException.class, () -> storage.delete(UUID3));
+    }
+
+    @Test
+    void getAllSorted() {
+        assertSize(3);
+        storage.save(r3Fio1);
+        storage.save(r5);
+        storage.save(r2Fio1);
+        storage.save(r2Fio2);
+        storage.save(r4);
+        Resume[] expected = {r2Fio1, r3Fio1, r2Fio2, r1, r2, r3, r4, r5 };
+        Resume[] sorted = storage.getAllSorted();
+        assertArrayEquals(expected, sorted);
     }
 
 }
