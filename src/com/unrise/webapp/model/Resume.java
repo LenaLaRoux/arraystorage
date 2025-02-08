@@ -1,5 +1,7 @@
 package com.unrise.webapp.model;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -11,6 +13,10 @@ public class Resume implements Comparable<Resume> {
     private String uuid;
     private String fullName;
 
+    private Map<String, String> contacts = new HashMap<>();
+    private Map<SectionType, ISection<?>> sections = new HashMap<>();
+
+
     public Resume() {
     }
 
@@ -18,9 +24,9 @@ public class Resume implements Comparable<Resume> {
         this.uuid = uuid;
     }
 
-    public Resume(String uuid, String fio) {
+    public Resume(String uuid, String fullName) {
         this(uuid);
-        this.fullName = fio;
+        this.fullName = fullName;
     }
 
     public String getUuid() {
@@ -38,6 +44,46 @@ public class Resume implements Comparable<Resume> {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    private Map<String, String> getContacts() {
+        return contacts;
+    }
+
+    public Map<String, String> getContactMap() {
+        return new HashMap<>(contacts);
+    }
+
+    private void setContacts(Map<String, String> contacts) {
+        this.contacts = contacts;
+    }
+
+    public void addContact(String contactType, String value) {
+        contacts.put(contactType, value);
+    }
+
+    public String getContact(String contactType) {
+        return contacts.get(contactType);
+    }
+
+    private Map<SectionType, ISection<?>> getSections() {
+        return sections;
+    }
+
+    public Map<SectionType, ISection<?>> getSectionMap() {
+        return new HashMap<>(sections);
+    }
+
+    private void setSections(Map<SectionType, ISection<?>> sections) {
+        this.sections = sections;
+    }
+
+    public void addSection(SectionType sectionType, ISection<?> value) {
+        sections.put(sectionType, value);
+    }
+
+    public ISection<?> getSection(SectionType sectionType) {
+        return sections.get(sectionType);
     }
 
     @Override
