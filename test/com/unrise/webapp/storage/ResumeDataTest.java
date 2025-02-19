@@ -11,15 +11,15 @@ import java.util.Optional;
 public class ResumeDataTest {
 
     @Test
-    public void testData (){
+    public void testData() {
         Resume resume = new Resume("uuid1", "Григорий Кислин");
         resume.addContact("Тел.", "+7(921) 855-0482");
         resume.addContact("Skype", "skype:grigory.kislin");
         resume.addContact("Почта", "gkislin@yandex.ru");
 
-        resume.addSection(SectionType.OBJECTIVE, new Text("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям."));
+        resume.addSection(SectionType.OBJECTIVE, new ListSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям."));
 
-        resume.addSection(SectionType.PERSONAL, new Text("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
+        resume.addSection(SectionType.PERSONAL, new ListSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
 
         resume.addSection(SectionType.ACHIEVEMENT, new TextList()
                 .add("Организация команды и успешная реализация Java проектов для сторонних заказчиков: приложения автопарк на стеке Spring Cloud/микросервисы, система мониторинга показателей спортсменов на Spring Boot, участие в проекте МЭШ на Play-2, многомодульный Spring Boot + Vaadin проект для комплексных DIY смет")
@@ -35,15 +35,15 @@ public class ResumeDataTest {
                 .add("XML/XSD/XSLT, SQL, C/C++, Unix shell scripts"));
 
 
-        resume.addSection(SectionType.EXPERIENCE, new ParticipationList()
-                .add( createParticipant(2013, Month.OCTOBER, "Java Online Projects", "Создание, организация и проведение Java онлайн проектов и стажировок.", "Автор проекта."))
-                .add(createParticipant(2014, 2016, Month.OCTOBER,Month.JANUARY,"Wrike","Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO.","Старший разработчик (backend)"))
-                .add(createParticipant(2012,2014, Month.APRIL,Month.OCTOBER,"RIT Center","Организация процесса разработки системы ERP для разных окружений: релизная политика, версионирование, ведение CI (Jenkins), миграция базы (кастомизация Flyway), конфигурирование системы (pgBoucer, Nginx), AAA via SSO. Архитектура БД и серверной части системы. Разработка интергационных сервисов: CMIS, BPMN2, 1C (WebServices), сервисов общего назначения (почта, экспорт в pdf, doc, html). Интеграция Alfresco JLAN для online редактирование из браузера документов MS Office. Maven + plugin development, Ant, Apache Commons, Spring security, Spring MVC, Tomcat,WSO2, xcmis, OpenCmis, Bonita, Python scripting, Unix shell remote scripting via ssh tunnels, PL/Python", "Java архитектор"))
+        resume.addSection(SectionType.EXPERIENCE, new CompanySection()
+                .add(createParticipant(2013, Month.OCTOBER, "Java Online Projects", null, "Создание, организация и проведение Java онлайн проектов и стажировок.", "Автор проекта."))
+                .add(createParticipant(2014, 2016, Month.OCTOBER, Month.JANUARY, "Wrike", null, "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO.", "Старший разработчик (backend)"))
+                .add(createParticipant(2012, 2014, Month.APRIL, Month.OCTOBER, "RIT Center", null, "Организация процесса разработки системы ERP для разных окружений: релизная политика, версионирование, ведение CI (Jenkins), миграция базы (кастомизация Flyway), конфигурирование системы (pgBoucer, Nginx), AAA via SSO. Архитектура БД и серверной части системы. Разработка интергационных сервисов: CMIS, BPMN2, 1C (WebServices), сервисов общего назначения (почта, экспорт в pdf, doc, html). Интеграция Alfresco JLAN для online редактирование из браузера документов MS Office. Maven + plugin development, Ant, Apache Commons, Spring security, Spring MVC, Tomcat,WSO2, xcmis, OpenCmis, Bonita, Python scripting, Unix shell remote scripting via ssh tunnels, PL/Python", "Java архитектор"))
         );
 
-        resume.addSection(SectionType.EDUCATION, new ParticipationList()
-                .add(createParticipant(2013, 2013, Month.MARCH, Month.MAY, "Coursera", "'Functional Programming Principles in Scala' by Martin Odersky", null))
-                .add(createParticipant(2011, 2011, Month.MARCH, Month.APRIL, "Luxoft", "Курс 'Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.'", null)));
+        resume.addSection(SectionType.EDUCATION, new CompanySection()
+                .add(createParticipant(2013, 2013, Month.MARCH, Month.MAY, "Coursera", null, "'Functional Programming Principles in Scala' by Martin Odersky", null))
+                .add(createParticipant(2011, 2011, Month.MARCH, Month.APRIL, "Luxoft", null, "Курс 'Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.'", null)));
 
         Assertions.assertEquals("+7(921) 855-0482", resume.getContact("Тел."));
         Assertions.assertEquals("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям.", resume.getSection(SectionType.OBJECTIVE).get());
@@ -52,28 +52,30 @@ public class ResumeDataTest {
         Assertions.assertEquals(4, section.get().size());
         section = (TextList) resume.getSection(SectionType.QUALIFICATIONS);
         Assertions.assertEquals(5, section.get().size());
-        ParticipationList partySection = (ParticipationList) resume.getSection(SectionType.EXPERIENCE);
+        CompanySection partySection = (CompanySection) resume.getSection(SectionType.EXPERIENCE);
         Assertions.assertEquals(3, partySection.get().size());
-        partySection = (ParticipationList) resume.getSection(SectionType.EDUCATION);
+        partySection = (CompanySection) resume.getSection(SectionType.EDUCATION);
         Assertions.assertEquals(2, partySection.get().size());
     }
 
-    private Participation createParticipant (Integer yearFrom, Integer yearTo, Month monthFrom, Month monthTo, String companyName, String description, String role)
-    {
-        Participation participation;
-        if (yearTo == null){
-            participation = new Participation(LocalDate.of(yearFrom, monthFrom,1), companyName);
-        }else{
-            participation = new Participation(LocalDate.of(yearFrom, monthFrom,1),
-                    LocalDate.of(yearTo, Optional.ofNullable(monthTo).orElse(Month.JANUARY),1),
-                    companyName);
+    private Company createParticipant(Integer yearFrom, Integer yearTo, Month monthFrom, Month monthTo, String companyName, String website, String description, String role) {
+        Company company = new Company(companyName);
+        company.setWebsite(website);
+
+        Period period;
+        if (yearTo == null) {
+            period = new Period(LocalDate.of(yearFrom, monthFrom, 1));
+        } else {
+            period = new Period(LocalDate.of(yearFrom, monthFrom, 1),
+                    LocalDate.of(yearTo, Optional.ofNullable(monthTo).orElse(Month.JANUARY), 1));
         }
-        participation.setDescription(description);
-        participation.setRole(role);
-        return participation;
+        period.setDescription(description);
+        period.setRole(role);
+        company.getPeriods().add(period);
+        return company;
     }
-    private Participation createParticipant (Integer yearFrom, Month monthFrom, String companyName, String description, String role)
-    {
-       return this.createParticipant(yearFrom, null, monthFrom, null, companyName,description,role);
+
+    private Company createParticipant(Integer yearFrom, Month monthFrom, String companyName, String website, String description, String role) {
+        return this.createParticipant(yearFrom, null, monthFrom, null, companyName, website, description, role);
     }
 }

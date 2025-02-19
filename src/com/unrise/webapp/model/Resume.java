@@ -14,7 +14,7 @@ public class Resume implements Comparable<Resume> {
     private String fullName;
 
     private Map<String, String> contacts = new HashMap<>();
-    private Map<SectionType, ISection<?>> sections = new HashMap<>();
+    private Map<SectionType, ASection> sections = new HashMap<>();
 
 
     public Resume() {
@@ -66,23 +66,23 @@ public class Resume implements Comparable<Resume> {
         return contacts.get(contactType);
     }
 
-    private Map<SectionType, ISection<?>> getSections() {
+    private Map<SectionType, ASection> getSections() {
         return sections;
     }
 
-    public Map<SectionType, ISection<?>> getSectionMap() {
+    public Map<SectionType, ASection> getSectionMap() {
         return new HashMap<>(sections);
     }
 
-    private void setSections(Map<SectionType, ISection<?>> sections) {
+    private void setSections(Map<SectionType, ASection> sections) {
         this.sections = sections;
     }
 
-    public void addSection(SectionType sectionType, ISection<?> value) {
+    public void addSection(SectionType sectionType, ASection value) {
         sections.put(sectionType, value);
     }
 
-    public ISection<?> getSection(SectionType sectionType) {
+    public ASection getSection(SectionType sectionType) {
         return sections.get(sectionType);
     }
 
