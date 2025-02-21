@@ -2,7 +2,9 @@ package com.unrise.webapp.storage;
 
 import com.unrise.webapp.model.Resume;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MapResumeStorage extends AbstractStorage<Resume> {
@@ -51,5 +53,10 @@ public class MapResumeStorage extends AbstractStorage<Resume> {
     @Override
     public int size() {
         return storage.size();
+    }
+
+    @Override
+    public List<Resume> doCopyAll() {
+        return new ArrayList<>(storage.values());
     }
 }

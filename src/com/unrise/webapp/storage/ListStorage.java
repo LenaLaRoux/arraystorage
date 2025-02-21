@@ -2,7 +2,9 @@ package com.unrise.webapp.storage;
 
 import com.unrise.webapp.model.Resume;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class ListStorage extends AbstractStorage<Integer> {
 
@@ -33,6 +35,7 @@ public class ListStorage extends AbstractStorage<Integer> {
         int position = getSearchKey(uuid);
         storage.remove(position);
     }
+
     @Override
     protected Resume doGet(Integer index) {
         return storage.get(index);
@@ -56,6 +59,11 @@ public class ListStorage extends AbstractStorage<Integer> {
     @Override
     protected boolean isFound(Integer key) {
         return Objects.nonNull(key);
+    }
+
+    @Override
+    public List<Resume> doCopyAll() {
+        return new ArrayList<>(storage);
     }
 
 }

@@ -6,6 +6,7 @@ import com.unrise.webapp.model.Resume;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.logging.Logger;
 
 public abstract class AbstractStorage<T> implements Storage {
@@ -87,4 +88,6 @@ public abstract class AbstractStorage<T> implements Storage {
     protected abstract void doDelete(T index, String uuid);
 
     protected abstract Resume doGet(T index);
+
+    protected abstract List<Resume> doCopyAll();
 }

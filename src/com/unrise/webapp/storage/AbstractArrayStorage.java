@@ -4,6 +4,7 @@ import com.unrise.webapp.exception.StorageException;
 import com.unrise.webapp.model.Resume;
 
 import java.util.Arrays;
+import java.util.List;
 
 public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     protected static final String NO_SPACE_LEFT = "ERROR: Resume database is full";
@@ -48,6 +49,11 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     protected void doDelete(Integer index, String uuid) {
         processDeleteArray(uuid, index);
         storage[--size] = null;
+    }
+
+    @Override
+    public List<Resume> doCopyAll() {
+        return Arrays.asList(Arrays.copyOfRange(storage, 0, size));
     }
 
     @Override
