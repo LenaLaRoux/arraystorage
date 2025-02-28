@@ -5,7 +5,7 @@ import com.unrise.webapp.model.Resume;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -26,18 +26,15 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     public void clear() {
-        List<File> fileList = traverseDirectory(directory);
+        List<File> fileList = getCheckedListFiles(directory);
         for (File file : fileList) {
-            if (!file.delete()) {
-                String dirOrFile = file.isDirectory() ? "directory " : "file ";
-                throw new RuntimeException("Unable to delete " + dirOrFile + file.getAbsolutePath());
-            }
+            doDelete(file, null);
         }
     }
 
     @Override
     public int size() {
-        List<File> fileList = traverseDirectory(directory);
+        List<File> fileList = getCheckedListFiles(directory);
         return fileList.size();
     }
 
@@ -63,11 +60,11 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected void doSave(File file, Resume r) {
         try {
-           if ( file.createNewFile() )
+            if (file.createNewFile())
                 doWrite(r, file);
-           else {
-               throw new StorageException("Unable to create file", file.getName());
-           }
+            else {
+                throw new StorageException("Unable to create file", file.getName());
+            }
         } catch (IOException e) {
             throw new StorageException("IO error", file.getName(), e);
         }
@@ -88,14 +85,14 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected void doDelete(File file, String uuid) {
-        if (!file.delete()){
+        if (!file.delete()) {
             throw new StorageException("Unable to delete file", file.getName());
         }
     }
 
     @Override
     public Resume[] getAll() {
-        List<File> fileList = traverseDirectory(directory);
+        List<File> fileList = getCheckedListFiles(directory);
         return fileList.stream()
                 .map(this::doGet)
                 .toArray(Resume[]::new);
@@ -103,28 +100,22 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected List<Resume> doCopyAll() {
-        List<File> fileList = traverseDirectory(directory);
+        List<File> fileList = getCheckedListFiles(directory);
         return fileList.stream()
                 .map(this::doGet)
                 .collect(Collectors.toList());
     }
 
-    public List<File> traverseDirectory(File directory) {
-        List<File> fileList = new ArrayList<>();
-
-        if (directory.isDirectory()) {
-            File[] files = directory.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    fileList.add(file);
-
-                    if (file.isDirectory()) {
-                        List<File> innerList = traverseDirectory(file);
-                        fileList.addAll(innerList);
-                    }
-                }
-            }
+    public List<File> getCheckedListFiles(File directory) {
+        if (!directory.isDirectory()) {
+            throw new StorageException("No a directory", directory.getAbsolutePath());
         }
-        return fileList;
+
+        File[] files = directory.listFiles();
+        if (files == null) {
+            throw new StorageException("No files found", directory.getAbsolutePath());
+        }
+
+        return Arrays.asList(files);
     }
 }
