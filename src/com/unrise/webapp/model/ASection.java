@@ -1,5 +1,7 @@
 package com.unrise.webapp.model;
 
-public abstract class ASection {
+import java.io.Serializable;
+
+public abstract class ASection implements Serializable {
     public abstract Object get();
 }
