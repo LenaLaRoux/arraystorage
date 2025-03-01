@@ -1,8 +1,6 @@
 package com.unrise.webapp.model;
 
-import java.io.Serializable;
-
-public enum SectionType implements Serializable {
+public enum SectionType {
     PERSONAL("Личные качества"),
     OBJECTIVE("Позиция"),
     ACHIEVEMENT("Достижения"),
@@ -10,11 +8,9 @@ public enum SectionType implements Serializable {
     EXPERIENCE("Опыт работы"),
     EDUCATION("Образование");
     private final String title;
-
     SectionType(String title) {
         this.title = title;
     }
-
     public String getTitle() {
         return title;
     }

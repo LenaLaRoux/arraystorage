@@ -1,12 +1,8 @@
 package com.unrise.webapp.model;
 
-import java.io.Serial;
 import java.util.Objects;
 
 public class ListSection extends ASection {
-    @Serial
-    private static final long serialVersionUID = 1L;
-
     private final String value;
 
     public ListSection(String text) {

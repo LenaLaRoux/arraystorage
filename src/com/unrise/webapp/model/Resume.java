@@ -1,6 +1,5 @@
 package com.unrise.webapp.model;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -8,7 +7,7 @@ import java.util.Objects;
 /**
  * Initial resume class
  */
-public class Resume implements Comparable<Resume>, Serializable {
+public class Resume implements Comparable<Resume> {
 
     // Unique identifier
     private String uuid;

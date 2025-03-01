@@ -1,11 +1,10 @@
 package com.unrise.webapp.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Company implements Serializable {
+public class Company {
     final String name;
     String website;
     final List<Period> periods = new ArrayList<>();

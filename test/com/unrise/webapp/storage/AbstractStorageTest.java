@@ -6,13 +6,11 @@ import com.unrise.webapp.model.Resume;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 abstract public class AbstractStorageTest {
-    protected static final File STORAGE_DIR = new File("D:\\topjava\\storage");
     protected final Storage storage;
     protected static final String UUID1 = "uuid1";
     protected static final String UUID2 = "uuid2";
@@ -37,7 +35,6 @@ abstract public class AbstractStorageTest {
 
     @BeforeEach
     void setUp() {
-        storage.clear();
         storage.save(r1);
         storage.save(r2);
         storage.save(r3);
@@ -145,7 +142,7 @@ abstract public class AbstractStorageTest {
         storage.save(r2Fio1);
         storage.save(r2Fio2);
         storage.save(r4);
-        Resume[] expected = {r2Fio1, r3Fio1, r2Fio2, r1, r2, r3, r4, r5};
+        Resume[] expected = {r2Fio1, r3Fio1, r2Fio2, r1, r2, r3, r4, r5 };
         Resume[] sorted = storage.getAllSorted();
         assertArrayEquals(expected, sorted);
     }

@@ -1,10 +1,9 @@
 package com.unrise.webapp.model;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Period implements Serializable {
+public class Period {
     final private LocalDate dateFrom;
     final private LocalDate dateTo;
     private String role;

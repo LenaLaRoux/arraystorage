@@ -1,15 +1,11 @@
 package com.unrise.webapp.model;
 
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
 public class TextList extends ASection implements Iterable<String> {
-    @Serial
-    private static final long serialVersionUID = 1L;
-
     private final List<String> lines;
 
     public TextList() {

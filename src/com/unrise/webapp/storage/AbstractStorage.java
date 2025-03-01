@@ -7,7 +7,6 @@ import com.unrise.webapp.model.Resume;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Logger;
 
 public abstract class AbstractStorage<T> implements Storage {
@@ -66,7 +65,7 @@ public abstract class AbstractStorage<T> implements Storage {
     @Override
     public Resume[] getAllSorted() {
 
-        Comparator<Resume> compare = Comparator.comparing(Resume::getFullName, Comparator.nullsLast((a, b) ->
+        Comparator<Resume> compare = Comparator.comparing(Resume::getFullName/*, Comparator.nullsLast((a, b) ->
         {
             if (Objects.equals(a, b))
                 return 0;
@@ -75,7 +74,7 @@ public abstract class AbstractStorage<T> implements Storage {
             else if (b == null)
                 return -1;
             else return a.compareTo(b);
-        })).thenComparing(Resume::getUuid);
+        })*/).thenComparing(Resume::getUuid);
 
         Resume[] resumes = getAll();
         Arrays.sort(resumes, compare);
