@@ -1,25 +1,31 @@
 package com.unrise.webapp;
 
 import java.io.File;
+import java.util.stream.Stream;
 
 public class Main {
-    public static void traverseDirectory(File directory) {
+    public static void traverseDirectory(File directory, int level) {
         if (directory.isDirectory()) {
+            System.out.println("\t".repeat(level) + directory.getName());
+            level++;
+            int levelFinal = level;
             File[] files = directory.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        traverseDirectory(file);
-                    } else {
-                        System.out.println(file.getAbsolutePath());
-                    }
-                }
-            }
+
+            if (files == null)
+                return;
+
+            Stream.of(files)
+                    .filter(File::isFile)
+                    .forEach(file -> System.out.println("\t".repeat(levelFinal) + file.getName()));
+
+            Stream.of(files)
+                    .filter(File::isDirectory)
+                    .forEach(file -> traverseDirectory(file, levelFinal));
         }
     }
 
     public static void main(String[] args) {
         File currentDir = new File("./src");
-        traverseDirectory(currentDir);
+        traverseDirectory(currentDir, 0);
     }
 }
