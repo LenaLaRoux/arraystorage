@@ -17,13 +17,13 @@ import java.util.stream.Stream;
 public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     private final Path directory;
 
-    private final StrategyContext context;
+    private final IWriteReadStrategy strategy;
 
-    protected AbstractPathStorage(String dir, StrategyContext context) {
+    protected AbstractPathStorage(String dir, IWriteReadStrategy strategy) {
         directory = Paths.get(dir);
         Objects.requireNonNull(directory, "directory must not be null");
-        Objects.requireNonNull(context, "strategy maust not be null");
-        this.context = context;
+        Objects.requireNonNull(strategy, "strategy maust not be null");
+        this.strategy = strategy;
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
             throw new IllegalArgumentException(dir + " is not directory or is not writable");
         }
@@ -65,7 +65,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
                 throw new StorageException("Cannot write to file", path.toAbsolutePath().toString());
             }
 
-            context.wrStrategy().doWrite(resume, new ObjectOutputStream(Files.newOutputStream(path)));
+            strategy.doWrite(resume, new ObjectOutputStream(Files.newOutputStream(path)));
         } catch (IOException e) {
             throw new StorageException("Path write error", resume.getUuid(), e);
         }
@@ -83,7 +83,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     protected void doSave(Path path, Resume resume) {
         try {
             Path createdFile = Files.createFile(path);
-            context.wrStrategy().doWrite(resume, new ObjectOutputStream(Files.newOutputStream(createdFile)));
+            strategy.doWrite(resume, new ObjectOutputStream(Files.newOutputStream(createdFile)));
         } catch (IOException e) {
             throw new StorageException("Couldn't create path ", path.toString(), e);
         }
@@ -92,7 +92,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     @Override
     protected Resume doGet(Path path) {
         try {
-            return context.wrStrategy().doRead(new ObjectInputStream(Files.newInputStream(path)));
+            return strategy.doRead(new ObjectInputStream(Files.newInputStream(path)));
         } catch (IOException e) {
             throw new StorageException("Path read error", path.toString(), e);
         }
