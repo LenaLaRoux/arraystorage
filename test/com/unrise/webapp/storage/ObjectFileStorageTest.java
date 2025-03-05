@@ -4,13 +4,15 @@ import com.unrise.webapp.model.Resume;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ObjectStreamPathStorageTest extends AbstractStorageTest {
-    public ObjectStreamPathStorageTest() {
-        super(new ObjectStreamStorage(STORAGE_DIR));
+public class ObjectFileStorageTest extends AbstractStorageTest {
+
+    public ObjectFileStorageTest() {
+        super(new FileStorage(STORAGE_DIR, new ObjectStreamSerializer()));
     }
 
     @Override
     void assertGet(Resume resume) {
         assertEquals(resume, storage.get(resume.getUuid()));
     }
+
 }

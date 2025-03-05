@@ -14,12 +14,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class AbstractPathStorage extends AbstractStorage<Path> {
+public class PathStorage extends AbstractStorage<Path> {
     private final Path directory;
 
-    private final IWriteReadStrategy strategy;
+    private final IStreamSerializer strategy;
 
-    protected AbstractPathStorage(String dir, IWriteReadStrategy strategy) {
+    protected PathStorage(String dir, IStreamSerializer strategy) {
         directory = Paths.get(dir);
         Objects.requireNonNull(directory, "directory must not be null");
         Objects.requireNonNull(strategy, "strategy maust not be null");
@@ -36,7 +36,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
                 Files.delete(path);
             }
         } catch (IOException e) {
-            throw new StorageException("Path delete error", null);
+            throw new StorageException("Path delete error", e);
         }
     }
 
@@ -44,7 +44,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     public int size() {
         List<Path> list = getListOfPathFiles(directory);
         if (list == null) {
-            throw new StorageException("Directory read error", null);
+            throw new StorageException("Directory read error");
         }
         return list.size();
     }

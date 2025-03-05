@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public abstract class AbstractFileStorage extends AbstractStorage<File> {
+public class FileStorage extends AbstractStorage<File> {
     private final File directory;
-    private final IWriteReadStrategy strategy;
+    private final IStreamSerializer strategy;
 
-    protected AbstractFileStorage(File directory, IWriteReadStrategy strategy) {
+    protected FileStorage(File directory, IStreamSerializer strategy) {
         Objects.requireNonNull(directory, "directory must not be null");
         Objects.requireNonNull(strategy, "strategy maust not be null");
 

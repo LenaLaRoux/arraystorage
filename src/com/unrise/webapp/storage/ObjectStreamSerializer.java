@@ -5,7 +5,7 @@ import com.unrise.webapp.model.Resume;
 
 import java.io.*;
 
-public class ObjectStreamWRStrategy implements IWriteReadStrategy {
+public class ObjectStreamSerializer implements IStreamSerializer {
     @Override
     public void doWrite(Resume r, OutputStream os) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(os)) {
@@ -18,7 +18,7 @@ public class ObjectStreamWRStrategy implements IWriteReadStrategy {
         try (ObjectInputStream ois = new ObjectInputStream(is)) {
             return (Resume) ois.readObject();
         } catch (ClassNotFoundException e) {
-            throw new StorageException("Error read resume", null, e);
+            throw new StorageException("Error read resume", e);
         }
     }
 }
