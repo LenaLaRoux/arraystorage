@@ -1,14 +1,18 @@
 package com.unrise.webapp.model;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Company implements Serializable {
-    final String name;
-    String website;
-    final List<Period> periods = new ArrayList<>();
+    private String name;
+    private String website;
+    private List<Period> periods = new ArrayList<>();
 
     public Company(String name) {
         this.name = name;

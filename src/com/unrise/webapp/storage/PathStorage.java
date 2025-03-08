@@ -51,11 +51,7 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     protected Path getSearchKey(String uuid) {
-        List<Path> list = getListOfPathFiles(directory);
-        return list.stream()
-                .filter(path -> uuid.equals(path.getFileName().toString()))
-                .findAny()
-                .orElse(null);
+        return directory.resolve(uuid);
     }
 
     @Override
@@ -73,10 +69,7 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     protected boolean isFound(Path path) {
-        Path parentDir = path.getParent();
-        return Files.isRegularFile(path)
-                && parentDir != null
-                && parentDir.equals(directory);
+        return  Files.isRegularFile(path);
     }
 
     @Override

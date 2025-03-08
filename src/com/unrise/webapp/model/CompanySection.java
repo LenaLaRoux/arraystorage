@@ -1,16 +1,20 @@
 package com.unrise.webapp.model;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class CompanySection extends ASection implements Iterable<Company> {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private final List<Company> companies;
+    private List<Company> companies;
 
     public CompanySection() {
         companies = new ArrayList<>();

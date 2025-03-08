@@ -1,12 +1,20 @@
 package com.unrise.webapp.model;
 
+import com.unrise.webapp.util.LocalDateAdapter;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Period implements Serializable {
-    final private LocalDate dateFrom;
-    final private LocalDate dateTo;
+    @XmlJavaTypeAdapter(LocalDateAdapter.class)
+    private LocalDate dateFrom;
+    @XmlJavaTypeAdapter(LocalDateAdapter.class)
+    private LocalDate dateTo;
     private String role;
     private String description;
 

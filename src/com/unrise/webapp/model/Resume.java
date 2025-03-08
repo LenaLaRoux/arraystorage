@@ -1,5 +1,9 @@
 package com.unrise.webapp.model;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +12,8 @@ import java.util.Objects;
 /**
  * Initial resume class
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Resume implements Comparable<Resume>, Serializable {
 
     // Unique identifier
@@ -47,7 +53,7 @@ public class Resume implements Comparable<Resume>, Serializable {
         this.fullName = fullName;
     }
 
-    private Map<String, String> getContacts() {
+    public Map<String, String> getContacts() {
         return contacts;
     }
 
@@ -91,7 +97,11 @@ public class Resume implements Comparable<Resume>, Serializable {
     public int compareTo(Resume o) {
         if (o == null)
             return 1;
-        return uuid.compareTo(o.uuid);
+        int cmp = fullName == o.fullName ? 0 :
+                fullName == null ? 1 :
+                        o.fullName == null ? -1 :
+                                fullName.compareTo(o.fullName);
+        return cmp != 0 ? cmp : uuid.compareTo(o.uuid);
     }
 
     @Override
@@ -104,11 +114,11 @@ public class Resume implements Comparable<Resume>, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Resume resume = (Resume) o;
-        return Objects.equals(uuid, resume.uuid) && Objects.equals(fullName, resume.fullName);
+        return Objects.equals(uuid, resume.uuid) && Objects.equals(fullName, resume.fullName) && Objects.equals(contacts, resume.contacts) && Objects.equals(sections, resume.sections);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid, fullName);
+        return Objects.hash(uuid, fullName, contacts, sections);
     }
 }
