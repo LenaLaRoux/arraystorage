@@ -6,10 +6,12 @@ import com.unrise.webapp.model.ASection;
 
 import java.io.Reader;
 import java.io.Writer;
+import java.time.LocalDate;
 
 public class JsonParser {
     private static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(ASection.class, new JsonSectionAdapter())
+            .registerTypeAdapter(ASection.class, new JsonSectionAdapter<ASection>())
+            .registerTypeAdapter(LocalDate.class, new JsonLocalDateAdapter())
             .create();
 
     public static <T> T read(Reader reader, Class<T> clazz) {

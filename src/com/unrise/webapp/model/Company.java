@@ -12,7 +12,11 @@ import java.util.Objects;
 public class Company implements Serializable {
     private String name;
     private String website;
-    private List<Period> periods = new ArrayList<>();
+    private final List<Period> periods = new ArrayList<>();
+
+    private Company() {
+
+    }
 
     public Company(String name) {
         this.name = name;

@@ -1,12 +1,11 @@
 package com.unrise.webapp.storage;
 
 import com.unrise.webapp.model.*;
+import com.unrise.webapp.storage.utils.ResumeTestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
 import java.time.Month;
-import java.util.Optional;
 
 public class ResumeDataTest {
 
@@ -36,14 +35,14 @@ public class ResumeDataTest {
 
 
         resume.addSection(SectionType.EXPERIENCE, new CompanySection()
-                .add(createParticipant(2013, Month.OCTOBER, "Java Online Projects", null, "Создание, организация и проведение Java онлайн проектов и стажировок.", "Автор проекта."))
-                .add(createParticipant(2014, 2016, Month.OCTOBER, Month.JANUARY, "Wrike", null, "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO.", "Старший разработчик (backend)"))
-                .add(createParticipant(2012, 2014, Month.APRIL, Month.OCTOBER, "RIT Center", null, "Организация процесса разработки системы ERP для разных окружений: релизная политика, версионирование, ведение CI (Jenkins), миграция базы (кастомизация Flyway), конфигурирование системы (pgBoucer, Nginx), AAA via SSO. Архитектура БД и серверной части системы. Разработка интергационных сервисов: CMIS, BPMN2, 1C (WebServices), сервисов общего назначения (почта, экспорт в pdf, doc, html). Интеграция Alfresco JLAN для online редактирование из браузера документов MS Office. Maven + plugin development, Ant, Apache Commons, Spring security, Spring MVC, Tomcat,WSO2, xcmis, OpenCmis, Bonita, Python scripting, Unix shell remote scripting via ssh tunnels, PL/Python", "Java архитектор"))
+                .add(ResumeTestUtils.createParticipant(2013, Month.OCTOBER, "Java Online Projects", null, "Создание, организация и проведение Java онлайн проектов и стажировок.", "Автор проекта."))
+                .add(ResumeTestUtils.createParticipant(2014, 2016, Month.OCTOBER, Month.JANUARY, "Wrike", null, "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO.", "Старший разработчик (backend)"))
+                .add(ResumeTestUtils.createParticipant(2012, 2014, Month.APRIL, Month.OCTOBER, "RIT Center", null, "Организация процесса разработки системы ERP для разных окружений: релизная политика, версионирование, ведение CI (Jenkins), миграция базы (кастомизация Flyway), конфигурирование системы (pgBoucer, Nginx), AAA via SSO. Архитектура БД и серверной части системы. Разработка интергационных сервисов: CMIS, BPMN2, 1C (WebServices), сервисов общего назначения (почта, экспорт в pdf, doc, html). Интеграция Alfresco JLAN для online редактирование из браузера документов MS Office. Maven + plugin development, Ant, Apache Commons, Spring security, Spring MVC, Tomcat,WSO2, xcmis, OpenCmis, Bonita, Python scripting, Unix shell remote scripting via ssh tunnels, PL/Python", "Java архитектор"))
         );
 
         resume.addSection(SectionType.EDUCATION, new CompanySection()
-                .add(createParticipant(2013, 2013, Month.MARCH, Month.MAY, "Coursera", null, "'Functional Programming Principles in Scala' by Martin Odersky", null))
-                .add(createParticipant(2011, 2011, Month.MARCH, Month.APRIL, "Luxoft", null, "Курс 'Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.'", null)));
+                .add(ResumeTestUtils.createParticipant(2013, 2013, Month.MARCH, Month.MAY, "Coursera", null, "'Functional Programming Principles in Scala' by Martin Odersky", null))
+                .add(ResumeTestUtils.createParticipant(2011, 2011, Month.MARCH, Month.APRIL, "Luxoft", null, "Курс 'Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.'", null)));
 
         Assertions.assertEquals("+7(921) 855-0482", resume.getContact("Тел."));
         Assertions.assertEquals("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям.", resume.getSection(SectionType.OBJECTIVE).get());
@@ -56,26 +55,5 @@ public class ResumeDataTest {
         Assertions.assertEquals(3, partySection.get().size());
         partySection = (CompanySection) resume.getSection(SectionType.EDUCATION);
         Assertions.assertEquals(2, partySection.get().size());
-    }
-
-    private Company createParticipant(Integer yearFrom, Integer yearTo, Month monthFrom, Month monthTo, String companyName, String website, String description, String role) {
-        Company company = new Company(companyName);
-        company.setWebsite(website);
-
-        Period period;
-        if (yearTo == null) {
-            period = new Period(LocalDate.of(yearFrom, monthFrom, 1));
-        } else {
-            period = new Period(LocalDate.of(yearFrom, monthFrom, 1),
-                    LocalDate.of(yearTo, Optional.ofNullable(monthTo).orElse(Month.JANUARY), 1));
-        }
-        period.setDescription(description);
-        period.setRole(role);
-        company.getPeriods().add(period);
-        return company;
-    }
-
-    private Company createParticipant(Integer yearFrom, Month monthFrom, String companyName, String website, String description, String role) {
-        return this.createParticipant(yearFrom, null, monthFrom, null, companyName, website, description, role);
     }
 }

@@ -18,6 +18,10 @@ public class Period implements Serializable {
     private String role;
     private String description;
 
+    private Period() {
+
+    }
+
     public Period(LocalDate dateFrom) {
         this(dateFrom, null);
     }
@@ -35,6 +39,9 @@ public class Period implements Serializable {
         return dateTo;
     }
 
+    public void setDateTo(LocalDate dateTo) {
+        this.dateTo = dateTo;
+    }
 
     public String getRole() {
         return role;

@@ -1,14 +1,22 @@
 package com.unrise.webapp.model;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+
 import java.io.Serial;
 import java.util.Objects;
 
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ListSection extends ASection {
     @Serial
     private static final long serialVersionUID = 1L;
 
     private String value;
+
+    private ListSection() {
+
+    }
 
     public ListSection(String text) {
         value = text;

@@ -2,11 +2,13 @@ package com.unrise.webapp.storage;
 
 import com.unrise.webapp.exception.ExistStorageException;
 import com.unrise.webapp.exception.NotExistStorageException;
-import com.unrise.webapp.model.Resume;
+import com.unrise.webapp.model.*;
+import com.unrise.webapp.storage.utils.ResumeTestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.time.Month;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,6 +47,30 @@ abstract public class AbstractStorageTest {
     @Test
     void update() {
         Resume resume = new Resume(UUID2);
+        resume.addContact("Тел.", "+7(921) 855-0482");
+        resume.addContact("Skype", "skype:grigory.kislin");
+        resume.addContact("Почта", "gkislin@yandex.ru");
+        resume.addSection(SectionType.OBJECTIVE, new ListSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям."));
+        resume.addSection(SectionType.PERSONAL, new ListSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
+        resume.addSection(SectionType.ACHIEVEMENT, new TextList()
+                .add("Организация команды и успешная реализация Java проектов для сторонних заказчиков: приложения автопарк на стеке Spring Cloud/микросервисы, система мониторинга показателей спортсменов на Spring Boot, участие в проекте МЭШ на Play-2, многомодульный Spring Boot + Vaadin проект для комплексных DIY смет")
+                .add("С 2013 года: разработка проектов \"Разработка Web приложения\",\"Java Enterprise\", \"Многомодульный maven. Многопоточность. XML (JAXB/StAX). Веб сервисы (JAX-RS/SOAP). Удаленное взаимодействие (JMS/AKKA)\". Организация онлайн стажировок и ведение проектов. Более 3500 выпускников."));
+
+        resume.addSection(SectionType.QUALIFICATIONS, new TextList()
+                .add("JEE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, WebLogic, WSO2")
+                .add("Version control: Subversion, Git, Mercury, ClearCase, Perforce"));
+
+        resume.addSection(SectionType.EXPERIENCE, new CompanySection()
+                .add(ResumeTestUtils.createParticipant(2013, Month.OCTOBER, "Java Online Projects", null, "Создание, организация и проведение Java онлайн проектов и стажировок.", "Автор проекта."))
+                .add(ResumeTestUtils.createParticipant(2014, 2016, Month.OCTOBER, Month.JANUARY, "Wrike", null, "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO.", "Старший разработчик (backend)"))
+                .add(ResumeTestUtils.createParticipant(2012, 2014, Month.APRIL, Month.OCTOBER, "RIT Center", null, "Организация процесса разработки системы ERP для разных окружений: релизная политика, версионирование, ведение CI (Jenkins), миграция базы (кастомизация Flyway), конфигурирование системы (pgBoucer, Nginx), AAA via SSO. Архитектура БД и серверной части системы. Разработка интергационных сервисов: CMIS, BPMN2, 1C (WebServices), сервисов общего назначения (почта, экспорт в pdf, doc, html). Интеграция Alfresco JLAN для online редактирование из браузера документов MS Office. Maven + plugin development, Ant, Apache Commons, Spring security, Spring MVC, Tomcat,WSO2, xcmis, OpenCmis, Bonita, Python scripting, Unix shell remote scripting via ssh tunnels, PL/Python", "Java архитектор"))
+        );
+
+        resume.addSection(SectionType.EDUCATION, new CompanySection()
+                .add(ResumeTestUtils.createParticipant(2013, 2013, Month.MARCH, Month.MAY, "Coursera", null, "'Functional Programming Principles in Scala' by Martin Odersky", null))
+                .add(ResumeTestUtils.createParticipant(2011, 2011, Month.MARCH, Month.APRIL, "Luxoft", null, "Курс 'Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.'", null)));
+
+
         assertNotSame(resume, storage.get(UUID2));
         storage.update(resume);
         assertGet(resume);
