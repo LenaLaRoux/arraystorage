@@ -2,6 +2,7 @@ package com.unrise.webapp.storage.serializer;
 
 import com.unrise.webapp.exception.StorageException;
 import com.unrise.webapp.model.*;
+import com.unrise.webapp.storage.IDataStreamConsumer;
 import com.unrise.webapp.storage.IStreamSerializer;
 import org.junit.platform.commons.util.StringUtils;
 
@@ -20,13 +21,13 @@ public class DataStreamSerializer implements IStreamSerializer {
     @Override
     public void doWrite(Resume r, OutputStream os) throws IOException {
         try (DataOutputStream dos = new DataOutputStream(os)) {
-            writeString(dos, r.getUuid());
-            writeString(dos, r.getFullName());
+            writeStr(dos, r.getUuid());
+            writeStr(dos, r.getFullName());
             Map<String, String> contacts = r.getContacts();
             dos.writeInt(contacts.size());
             for (Map.Entry<String, String> entry : contacts.entrySet()) {
-                writeString(dos, entry.getKey());
-                writeString(dos, entry.getValue());
+                writeStr(dos, entry.getKey());
+                writeStr(dos, entry.getValue());
             }
 
             for (SectionType sectionType : SectionType.values()) {
@@ -35,42 +36,37 @@ public class DataStreamSerializer implements IStreamSerializer {
                 if (section == null)
                     continue;
 
-                writeString(dos, sectionType.name());
-                writeData(dos, section.get());
+                writeStr(dos, sectionType.name());
+
+                switch (section) {
+                    case ListSection listSection -> writeStr(dos, listSection.get());
+                    case TextList list -> writeSectionList(dos, list.get(), dos::writeUTF);
+                    case CompanySection cSections -> writeSectionList(dos, cSections.getCompanies(), c -> {
+                        writeStr(dos, c.getName());
+                        writeStr(dos, c.getWebsite());
+                        writeSectionList(dos, c.getPeriods(), p -> {
+                            writeDateToLong(dos, p.getDateFrom());
+                            writeDateToLong(dos, p.getDateTo());
+                            writeStr(dos, p.getRole());
+                            writeStr(dos, p.getDescription());
+                        });
+                    });
+                    default -> throw new StorageException("Unexpected value: " + section.get());
+                }
             }
         }
     }
 
-    private void writeData(DataOutputStream dos, Object sectionObject) throws IOException {
-        switch (sectionObject) {
-            case String str -> writeString(dos, str);
-            case List list -> {
-                int count = list.size();
-                dos.writeInt(count);
-                for (Object o : list) {
-                    writeData(dos, o);
-                }
-            }
-            case Company c -> {
-                writeString(dos, c.getName());
-                writeString(dos, c.getWebsite());
-                writeData(dos, c.getPeriods());
-            }
-            case Period p -> {
-                writeDateToLong(dos, p.getDateFrom());
-                writeDateToLong(dos, p.getDateTo());
-                writeString(dos, p.getRole());
-                writeString(dos, p.getDescription());
-            }
-            default -> throw new StorageException("Unexpected value: " + sectionObject);
-        }
+    private <T> void writeSectionList(DataOutputStream dos, List<T> listItem, IDataStreamConsumer<T> writer) throws IOException {
+        dos.writeInt(listItem.size());
+        listItem.forEach(writer::acceptWrapper);
     }
 
     private void writeDateToLong(DataOutputStream dos, LocalDate ld) throws IOException {
         dos.writeLong(ld == null ? 0 : TimeUnit.DAYS.toMillis(ld.toEpochDay()));
     }
 
-    private void writeString(DataOutputStream dos, String str) throws IOException {
+    private void writeStr(DataOutputStream dos, String str) throws IOException {
         dos.writeUTF(Optional.ofNullable(str).orElse(""));
     }
 
@@ -99,8 +95,8 @@ public class DataStreamSerializer implements IStreamSerializer {
                                 c.setWebsite(readStr(dis));
 
                                 readList(dis, c.getPeriods(), () -> {
-                                    LocalDate dateStart = millsToLocalDate(dis.readLong());
-                                    LocalDate dateEnd = millsToLocalDate(dis.readLong());
+                                    LocalDate dateStart = readLongToDate(dis.readLong());
+                                    LocalDate dateEnd = readLongToDate(dis.readLong());
                                     Period p = new Period(dateStart, dateEnd);
                                     p.setRole(readStr(dis));
                                     p.setDescription(readStr(dis));
@@ -120,7 +116,7 @@ public class DataStreamSerializer implements IStreamSerializer {
         }
     }
 
-    public static LocalDate millsToLocalDate(long millis) {
+    public static LocalDate readLongToDate(long millis) {
         if (millis == 0)
             return null;
         Instant instant = Instant.ofEpochMilli(millis);
@@ -132,13 +128,13 @@ public class DataStreamSerializer implements IStreamSerializer {
         return StringUtils.isBlank(str) ? null : str;
     }
 
-    private void readSectionList(DataInputStream dis, Resume resume, SectionType type, ASection section, Callable callable) throws Exception {
+    private <T> void readSectionList(DataInputStream dis, Resume resume, SectionType type, ASection section, Callable<T> callable) throws Exception {
         resume.addSection(type, section);
-        List l = (List) section.get();
+        List<T> l = (List<T>) section.get();
         readList(dis, l, callable);
     }
 
-    private void readList(DataInputStream dis, List list, Callable callable) throws Exception {
+    private <T> void readList(DataInputStream dis, List<T> list, Callable<T> callable) throws Exception {
         int count = dis.readInt();
         for (int i = 0; i < count; i++) {
             list.add(callable.call());
