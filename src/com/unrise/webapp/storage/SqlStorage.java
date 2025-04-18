@@ -1,6 +1,5 @@
 package com.unrise.webapp.storage;
 
-import com.unrise.webapp.exception.ExistStorageException;
 import com.unrise.webapp.exception.NotExistStorageException;
 import com.unrise.webapp.model.Resume;
 import com.unrise.webapp.sql.IConnectionFactory;
@@ -10,7 +9,7 @@ import java.sql.DriverManager;
 import java.util.List;
 
 public class SqlStorage implements Storage {
-    public final IConnectionFactory connectionFactory;
+    private final IConnectionFactory connectionFactory;
 
     public SqlStorage(String dbUrl, String dbUser, String dbPassword) {
         connectionFactory = () -> DriverManager.getConnection(dbUrl, dbUser, dbPassword);
@@ -24,16 +23,12 @@ public class SqlStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-        List<Resume> resumes = getByUuid(uuid);
+        List<Resume> resumes = SqlHelper.getInst(connectionFactory)
+                .select("SELECT * FROM resume r WHERE r.uuid =? LIMIT 1", uuid);
         if (resumes.isEmpty()) {
             throw new NotExistStorageException(uuid);
         }
         return resumes.get(0);
-    }
-
-    private List<Resume> getByUuid(String uuid) {
-        return SqlHelper.getInst(connectionFactory)
-                .select("SELECT * FROM resume r WHERE r.uuid =?", uuid);
     }
 
     @Override
@@ -44,18 +39,14 @@ public class SqlStorage implements Storage {
 
     @Override
     public void save(Resume r) {
-        if (!getByUuid(r.getUuid()).isEmpty()) {
-            throw new ExistStorageException(r.getUuid());
-        }
         SqlHelper.getInst(connectionFactory)
                 .executeStatement("INSERT INTO resume (uuid, full_name) VALUES (?,?)", r.getUuid(), r.getFullName());
     }
 
     @Override
     public void delete(String uuid) {
-        get(uuid);
         SqlHelper.getInst(connectionFactory)
-                .executeStatement("DELETE FROM resume WHERE uuid = ?", uuid);
+                .executeUpdate("DELETE FROM resume WHERE uuid = ?", uuid, uuid);
     }
 
     @Override
@@ -75,6 +66,6 @@ public class SqlStorage implements Storage {
     @Override
     public int size() {
         return SqlHelper.getInst(connectionFactory)
-                .select("SELECT * FROM resume").size();
+                .count("SELECT count(*) FROM resume", null);
     }
 }
