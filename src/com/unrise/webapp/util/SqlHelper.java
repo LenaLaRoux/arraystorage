@@ -1,5 +1,6 @@
 package com.unrise.webapp.util;
 
+import com.unrise.webapp.exception.ExistStorageException;
 import com.unrise.webapp.exception.NotExistStorageException;
 import com.unrise.webapp.exception.StorageException;
 import com.unrise.webapp.model.Resume;
@@ -15,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SqlHelper {
+
+    private static final String PRIMARY_KEY_DUPLICATED_CODE = "23505";
     private static SqlHelper INST;
     private final IConnectionFactory connectionFactory;
 
@@ -35,14 +38,14 @@ public class SqlHelper {
                 throw new NotExistStorageException(uuid);
             }
             return null;
-        }, props);
+        }, uuid, props);
     }
 
     public void executeStatement(String sql, String... props) {
         prepareAndReturn(sql, ps -> {
             ps.execute();
             return null;
-        }, props);
+        },null,  props);
     }
 
     public void executeStatement(String statement) {
@@ -65,7 +68,24 @@ public class SqlHelper {
                     }
 
                     return resumes;
-                }
+                },
+                uuid
+        );
+
+    }
+
+    public int count(String select, String uuid) {
+        final boolean isNotSetUuid = StringUtils.isBlank(uuid);
+        return prepareAndReturn(select,
+                ps -> {
+                    if (!isNotSetUuid) {
+                        ps.setString(1, uuid);
+                    }
+
+                    ResultSet rs = ps.executeQuery();
+                    return rs.next()? rs.getInt(1) : 0;
+                },
+                uuid
         );
 
     }
@@ -74,17 +94,21 @@ public class SqlHelper {
         return select(select, null);
     }
 
-    private <T> T prepareAndReturn(String sql, ISqlRunAndReturn<T> sqlExecute, String... props) {
+    private <T> T prepareAndReturn(String sql, ISqlRunAndReturn<T> sqlExecute, String uuid, String... props) {
         try (Connection conn = connectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            if (props != null) {
+            if (props != null ) {
                 for (int i = 0; i < props.length; i++) {
                     ps.setString(i + 1, props[i]);
                 }
             }
             return sqlExecute.accept(ps);
         } catch (SQLException ex) {
-            throw new StorageException(ex);
+            switch (ex.getSQLState()){
+                case PRIMARY_KEY_DUPLICATED_CODE: throw new ExistStorageException(uuid);
+                default: throw new StorageException(ex);
+            }
+
         }
     }
 }
